@@ -28,10 +28,19 @@ def apply_custom_paths():
     if args.extra_model_paths_config:
         for config_path in itertools.chain(*args.extra_model_paths_config):
             utils.extra_config.load_extra_path_config(config_path)
+    
+    if os.getenv('COMFYUI_EXTRAS_PATH'):
+        env_extra_paths = os.getenv('COMFYUI_EXTRAS_PATH').split(os.pathsep)
+        for env_path in env_extra_paths:
+            utils.extra_config.load_extra_path_config(env_path)
 
     # --output-directory, --input-directory, --user-directory
     if args.output_directory:
         output_dir = os.path.abspath(args.output_directory)
+        logging.info(f"Setting output directory to: {output_dir}")
+        folder_paths.set_output_directory(output_dir)
+    elif os.getenv('COMFYUI_OUTPUT_DIRECTORY'):
+        output_dir = os.path.abspath(os.getenv('COMFYUI_OUTPUT_DIRECTORY'))
         logging.info(f"Setting output directory to: {output_dir}")
         folder_paths.set_output_directory(output_dir)
 
@@ -47,9 +56,17 @@ def apply_custom_paths():
         input_dir = os.path.abspath(args.input_directory)
         logging.info(f"Setting input directory to: {input_dir}")
         folder_paths.set_input_directory(input_dir)
+    elif os.getenv('COMFYUI_INPUT_DIRECTORY'):
+        input_dir = os.path.abspath(os.getenv('COMFYUI_INPUT_DIRECTORY'))
+        logging.info(f"Setting input directory to: {input_dir}")
+        folder_paths.set_input_directory(input_dir)
 
     if args.user_directory:
         user_dir = os.path.abspath(args.user_directory)
+        logging.info(f"Setting user directory to: {user_dir}")
+        folder_paths.set_user_directory(user_dir)
+    elif os.getenv('COMFYUI_USER_DIRECTORY'):
+        user_dir = os.path.abspath(os.getenv('COMFYUI_USER_DIRECTORY'))
         logging.info(f"Setting user directory to: {user_dir}")
         folder_paths.set_user_directory(user_dir)
 
